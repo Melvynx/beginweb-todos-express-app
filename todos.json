@@ -1,0 +1,19 @@
+{
+  "todos": [
+    {
+      "id": 1,
+      "text": "Buy milk",
+      "completed": true
+    },
+    {
+      "id": 3,
+      "text": "Buy breads",
+      "completed": false
+    },
+    {
+      "text": "Buy chocolate",
+      "completed": false,
+      "id": 1732503305966
+    }
+  ]
+}

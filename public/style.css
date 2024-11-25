@@ -1,0 +1,37 @@
+body,
+html {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main {
+  background: hsl(0deg 0% 90%);
+  padding: 32px;
+  border-radius: 16px;
+  border: 2px solid hsl(0deg 0% 70%);
+}
+
+h1 {
+  margin: 0;
+}
+
+li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+ul {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+li button {
+  margin-left: auto;
+}
