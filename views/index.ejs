@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Todo list</title>
+    <link href="/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <main>
+      <h1>Todo list</h1>
+
+      <form method="post" action="/todos">
+        <div class="input-container">
+          <input name="todo" type="text" placeholder="Add a new todo..." />
+          <button type="submit">+</button>
+        </div>
+      </form>
+
+      <ul id="list">
+        <% todos.forEach(todo => { %>
+        <li data-todoid="<%= todo.id %>">
+          <input type="checkbox" <%= todo.completed ? 'checked' : '' %> />
+          <span><%= todo.text %></span>
+          <button>❌</button>
+        </li>
+        <% }) %>
+      </ul>
+    </main>
+
+    <script src="/script.js"></script>
+  </body>
+</html>

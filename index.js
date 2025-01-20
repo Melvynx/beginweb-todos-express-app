@@ -12,6 +12,7 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(express.static("public"));
+app.set("view engine", "ejs");
 
 async function getTodos() {
   const todos = await fs.readFile("todos.json", "utf-8");
@@ -29,39 +30,7 @@ async function updateTodos(newTodos) {
 app.get("/", async (req, res) => {
   // HTML File
   res.setHeader("Content-Type", "text/html");
-  res.send(`
-<head>
-  <title>Todo list</title>
-  <link href="/style.css" rel="stylesheet" />
-</head>
-<body>
-  <main>
-    <h1>Todo list</h1>
-
-    <form method="post" action="/todos">
-      <input name="todo" />
-      <button type="submit">Submit</button>
-    </form>
-
-    <ul id="list">
-      
-      ${(await getTodos())
-        .map(
-          (todo) => `
-      <li data-todoid="${todo.id}">
-        <input type="checkbox" ${todo.completed ? "checked" : ""} />
-        <span>${todo.text}</span>
-        <button>❌</button>
-      </li>`
-        )
-        .join(" ")}
-      
-    </ul>
-  </main>
-
-  <script src="/script.js"></script>
-</body>
-  `);
+  res.render("index", { todos: await getTodos() });
 });
 
 app.post("/todos", async (req, res) => {

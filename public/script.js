@@ -22,11 +22,10 @@ ulEl.addEventListener("click", (e) => {
 });
 
 async function updateTodo(todoId, checked) {
-  // fetch pour mettre à jour !!!
   const res = await fetch(`/todos/${todoId}`, {
     method: "PATCH",
     body: JSON.stringify({
-      completed: "",
+      completed: checked,
     }),
     headers: {
       "Content-Type": "application/json",
