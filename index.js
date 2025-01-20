@@ -1,6 +1,7 @@
 import bodyParser from "body-parser";
 import express from "express";
 import fs from "fs/promises";
+import { initDB } from "./db.js";
 
 const app = express();
 const port = 3000;
@@ -13,6 +14,9 @@ app.use(
 app.use(bodyParser.json());
 app.use(express.static("public"));
 app.set("view engine", "ejs");
+
+// Database
+initDB();
 
 async function getTodos() {
   const todos = await fs.readFile("todos.json", "utf-8");
