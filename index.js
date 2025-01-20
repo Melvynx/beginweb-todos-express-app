@@ -1,7 +1,6 @@
 import bodyParser from "body-parser";
 import express from "express";
-import fs from "fs/promises";
-import { initDB } from "./db.js";
+import { getDB, initDB } from "./db.js";
 
 const app = express();
 const port = 3000;
@@ -19,16 +18,9 @@ app.set("view engine", "ejs");
 initDB();
 
 async function getTodos() {
-  const todos = await fs.readFile("todos.json", "utf-8");
-  const parsedTodos = JSON.parse(todos);
-  return parsedTodos.todos;
-}
-
-async function updateTodos(newTodos) {
-  const newTodosObj = { todos: newTodos };
-  const newTodosStr = JSON.stringify(newTodosObj, null, 2);
-  await fs.writeFile("todos.json", newTodosStr);
-  return newTodos;
+  const db = await getDB();
+  const todos = await db.all("SELECT * FROM todos");
+  return todos;
 }
 
 app.get("/", async (req, res) => {
@@ -38,17 +30,16 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/todos", async (req, res) => {
-  // récupérer le body qui est un form data ?
+  const db = await getDB();
 
-  const newTodos = [
-    ...(await getTodos()),
+  await db.run(
+    `INSERT INTO todos (text, completed) 
+VALUES ($todo, 0);`,
     {
-      text: req.body.todo,
-      completed: false,
-      id: Date.now(),
-    },
-  ];
-  updateTodos(newTodos);
+      $todo: req.body.todo,
+    }
+  );
+
   res.redirect("/");
 });
 
@@ -63,18 +54,16 @@ app.patch("/todos/:id", async (req, res) => {
     return;
   }
 
-  const todos = await getTodos();
-  const newTodos = todos.map((todo) => {
-    if (todo.id === Number(todoId)) {
-      return {
-        ...todo,
-        completed: body.completed,
-      };
+  const db = await getDB();
+  await db.run(
+    `UPDATE todos 
+SET completed = $completed 
+WHERE id = $id;`,
+    {
+      $completed: body.completed,
+      $id: todoId,
     }
-    return todo;
-  });
-
-  updateTodos(newTodos);
+  );
 
   res.status(200);
   res.send("ok");
@@ -83,9 +72,14 @@ app.patch("/todos/:id", async (req, res) => {
 app.delete("/todos/:id", async (req, res) => {
   const todoId = req.params.id;
 
-  const todos = await getTodos();
-  const newTodos = todos.filter((todo) => todo.id !== Number(todoId));
-  updateTodos(newTodos);
+  const db = await getDB();
+  await db.run(
+    `DELETE FROM todos
+WHERE id = $id`,
+    {
+      $id: todoId,
+    }
+  );
 
   res.status(200);
   res.send("Ok");

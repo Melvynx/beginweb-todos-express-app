@@ -7,6 +7,7 @@ export async function initDB() {
   dbInstance = await open({
     filename: "db/database.db",
     driver: sqlite3.Database,
+    mode: sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
   });
 
   await dbInstance.exec(`
